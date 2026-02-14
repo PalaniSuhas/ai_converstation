@@ -1,0 +1,7 @@
+google-genai
+websockets
+python-dotenv
+pyttsx3
+asyncio
+requests
+gtts
