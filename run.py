@@ -2,6 +2,7 @@
 """
 Main entry point for AI-driven negotiation agents
 100% AI - NO HARDCODING - NO NLP
+FIXED: Proper async handling
 """
 
 import asyncio
@@ -84,8 +85,8 @@ async def run_company_agent(company_name: str, server_url: str):
     print(f"Strategy: AI reasoning from research")
     print(f"Responses: AI-generated dynamically\n")
     
-    # Create AI agent (it will research company via web)
-    agent = AICompanyAgent(company_name=company_name, websocket_url=server_url)
+    # Create AI agent using async factory method
+    agent = await AICompanyAgent.create(company_name=company_name, websocket_url=server_url)
     
     try:
         await agent.connect()
@@ -93,6 +94,8 @@ async def run_company_agent(company_name: str, server_url: str):
         print("\n\n[INTERRUPTED] Shutting down AI agent...\n")
     except Exception as e:
         print(f"\n[ERROR] {e}\n")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 
@@ -113,8 +116,8 @@ async def run_investor_agent(investor_name: str, server_url: str):
     print(f"Strategy: AI reasoning from research")
     print(f"Responses: AI-generated dynamically\n")
     
-    # Create AI agent (it will research investor via web)
-    agent = AIInvestorAgent(investor_name=investor_name, websocket_url=server_url)
+    # Create AI agent using async factory method
+    agent = await AIInvestorAgent.create(investor_name=investor_name, websocket_url=server_url)
     
     try:
         await agent.connect()
@@ -122,6 +125,8 @@ async def run_investor_agent(investor_name: str, server_url: str):
         print("\n\n[INTERRUPTED] Shutting down AI agent...\n")
     except Exception as e:
         print(f"\n[ERROR] {e}\n")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 
@@ -143,6 +148,8 @@ def main():
         print("\n\nShutdown complete.\n")
     except Exception as e:
         print(f"\nFatal error: {e}\n")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 

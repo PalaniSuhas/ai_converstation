@@ -43,8 +43,8 @@ class AIRelayServer:
         # Session state
         self.session_active = False
         self.turn_count = 0
-        self.min_turns = 6
-        self.max_turns = 20
+        self.min_turns = 6  # Minimum before AI can decide to end
+        # NO MAX TURNS - continues until accept/decline only
         self.conversation_history = []
         
         # Agent metadata
@@ -66,7 +66,8 @@ class AIRelayServer:
         print(f"{'='*60}\n")
         print(f"Host: {self.host}")
         print(f"Port: {self.port}")
-        print(f"Turn limits: {self.min_turns} min, {self.max_turns} max")
+        print(f"Min turns: {self.min_turns}")
+        print(f"Max turns: NONE (continues until accept/decline)")
         print(f"AI Mode: ENABLED (dynamic termination)")
         print(f"\nWaiting for agents to connect...\n")
     
@@ -133,7 +134,8 @@ class AIRelayServer:
         print(f"{'='*60}")
         print(f"  Company: {self.company_name}")
         print(f"  Investor: {self.investor_name}")
-        print(f"  Turn Limits: {self.min_turns}-{self.max_turns} (AI-driven)")
+        print(f"  Min Turns: {self.min_turns}")
+        print(f"  Termination: AI-driven (accept/decline only)")
         print(f"  Mode: FULLY AI (no hardcoded termination rules)")
         print(f"{'='*60}\n")
         
@@ -180,22 +182,16 @@ class AIRelayServer:
     async def ai_check_termination(self):
         """
         AI analyzes conversation and decides if negotiation should end
-        NO hardcoded patterns - pure AI reasoning
+        ONLY ends when investor accepts or declines - NO MAX TURNS
         """
         # Need minimum turns for substantive discussion
         if self.turn_count < self.min_turns:
             return
         
-        # Safety limit
-        if self.turn_count >= self.max_turns:
-            await self.end_session(
-                "MAX_TURNS_REACHED",
-                f"Reached maximum {self.max_turns} turns. Parties need more time."
-            )
-            return
+        # NO MAX TURNS CHECK - runs until accept/decline
         
-        # Let AI analyze if negotiation should end
-        if self.client and self.turn_count >= self.min_turns:
+        # Let AI analyze if negotiation should end (check every 2 turns)
+        if self.client and self.turn_count >= self.min_turns and self.turn_count % 2 == 0:
             should_end = await self._ai_analyze_termination()
             
             if should_end:
@@ -209,10 +205,6 @@ class AIRelayServer:
         Returns termination decision or None to continue
         """
         if not self.client:
-            return None
-        
-        # Only check every 2 turns to avoid excessive API calls
-        if self.turn_count % 2 != 0:
             return None
         
         # Get recent conversation
