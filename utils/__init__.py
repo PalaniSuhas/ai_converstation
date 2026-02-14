@@ -1,20 +1,21 @@
 """
-Utility modules for AI negotiation system
+AI-Driven Utilities
+NO HARDCODING - Everything from AI reasoning + web search
 """
 
-from .prompts import get_company_prompt, get_investor_prompt, get_conclusion_prompt
-from .context_fetcher import get_company_context, get_investor_context
-from .tts_engine import get_tts_engine, TTSEngine
-from .brave_search import get_brave_search, BraveSearch
+from .ai_context_fetcher import AIContextFetcher, get_ai_context_fetcher
+from .ai_prompts import (
+    get_company_ai_prompt,
+    get_investor_ai_prompt,
+    get_ai_system_prompt,
+    get_ai_conclusion_prompt
+)
 
 __all__ = [
-    'get_company_prompt',
-    'get_investor_prompt',
-    'get_conclusion_prompt',
-    'get_company_context',
-    'get_investor_context',
-    'get_tts_engine',
-    'TTSEngine',
-    'get_brave_search',
-    'BraveSearch'
+    'AIContextFetcher',
+    'get_ai_context_fetcher',
+    'get_company_ai_prompt',
+    'get_investor_ai_prompt',
+    'get_ai_system_prompt',
+    'get_ai_conclusion_prompt'
 ]
